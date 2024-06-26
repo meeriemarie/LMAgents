@@ -109,7 +109,7 @@ def index():
 @socketio.on('start_conversation')
 def handle_start_conversation(data):
     topic = data['topic']
-    socketio.emit('new_message', {'role': 'system', 'content': f"Starting conversation on topic: {topic}"})
+    socketio.emit('new_message', {'role': 'You', 'content': f"{topic}"})
 
     for agent in agents:
         agent.reset_history()
@@ -128,7 +128,7 @@ def run_conversation(agents, initial_message, num_turns=15):
         socketio.emit('new_message', {'role': agent.name, 'content': response})
         message = response
         last_agent = agent
-        time.sleep(1)  # Add a delay between messages
+        time.sleep(0.8)  # Add a delay between messages
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)
