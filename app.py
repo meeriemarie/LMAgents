@@ -8,6 +8,7 @@ import time
 import random
 import json
 import csv  # Import the CSV module
+import math
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -114,7 +115,7 @@ def handle_start_conversation(data):
         agent.reset_history()
         agent.history.append({"role": "user", "content": topic})
 
-    threading.Thread(target=run_conversation, args=(agents, topic)).start()
+    threading.Thread(target=run_conversation, args=(agents, topic, math.floor(1 + random.random() * 5))).start()
 
 def run_conversation(agents, initial_message, num_turns=15):
     message = initial_message

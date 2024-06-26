@@ -2,30 +2,178 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Agent Chat</title>
+    <title>Love Chat AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
     <style>
+        html {
+            background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) ), url(https://i.etsystatic.com/43460677/r/il/9f7e35/4893419398/il_fullxfull.4893419398_dbkv.jpg);
+            background-size: cover;
+            padding: 0;
+            margin: 0;
+        }
+        body {
+            font-family: "Outfit", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 300;
+            font-style: normal;
+            margin: 0;
+            padding: 0;
+        }
         .message {
             margin-bottom: 10px;
+            text-align: left;
         }
         #chat {
-            max-height: 400px;
+            max-height: 350px;
+            min-height: 350px;
             overflow-y: auto;
-            border: 1px solid #ccc;
+            border: 2px solid #1D1824;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 40px;
+            background-color: whitesmoke;
+        }
+        #user_input {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        #topic_input {
+            width: 40vw;
+            height: 25px;
+            border: 2px solid #1D1824;
+            border-radius: 8px;
+            margin: 10px;
+            font-family: "Outfit", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 300;
+            font-style: normal;
+        }
+        #msgbutton {
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            margin-right: 10px;
+            font-family: "Outfit", sans-serif;
+            font-optical-sizing: auto;
+            font-weight: 300;
+            font-style: normal;
+            background-color: #f5dd72;
+            border: none;
+            border-radius: 4px;
+            width: 60px;
+            height: 30px;
+        }
+        #msgbutton:hover {
+            background-color: #bba040;
+            color: whitesmoke;
+        }
+        #container {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            height: 70px;
+            background-color: whitesmoke;
+            padding-left: 40px;
+            padding-right: 20px;
+        }
+        .article {
+            margin: 10px;
             padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .paragraph {
+            text-align: justify;
+            width: 900px;
+            background-color: rgb(238, 218, 131);
+            border-radius: 8px;
+            border: 2px solid #bba040;
+            padding: 10px;
+        }
+        #characters {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+        .card {
+            width: 300px;
+            height: 450px;
+            background-color: whitesmoke;
+            border-radius: 6px;
+            text-align: center;
+            padding: 10px;
+            margin-top: 40px;
+        }
+        .profile {
+            width: 200px;
+            height: 200px;
+            border: solid 2px slategray;
+            margin-bottom: 15px;
+        }
+        .description {
+            padding: 5px;
         }
     </style>
 </head>
+<header id="container">
+    <h1 id="heading">Love Chat AI</h1>
+</header>
 <body>
-    <h1>Chat with Agents</h1>
+    <article class="article">
+        <p class="paragraph">
+            You are suddenly added into a group chat of four guys. Was it an accident? Was it fate? It is up to you, how you
+            want this opportunity to unfold. Do you want to befriend these strangers or are you on the hunt for true love?
+            Win over these handsome men in "Love Chat AI" and see for yourself! 
+        </p>
+    </article>
     <div id="chat"></div>
-    <input type="text" id="topic_input" placeholder="Enter a topic..." autocomplete="off"/>
-    <button onclick="startConversation()">Start Conversation</button>
+    <div id="user_input">
+        <input type="text" id="topic_input" placeholder="Enter a topic..." autocomplete="off"/>
+        <button id="msgbutton" onclick="startConversation()">Send</button>
+    </div>
+    <div id="characters">
+        <div class="card">
+            <h2>Haku</h2>
+            <img class="profile" alt="Profile Picture" src="{{ url_for('static', filename='images/haku.jpg') }}" />
+            <p class="description">Haku is a soft spoken and quiet guy. He tends to keep to himself, but he has a big heart and is very generous.</p>
+        </div>
+        <div class="card">
+            <h2>Ren</h2>
+            <img class="profile" alt="Profile Picture" src="{{ url_for('static', filename='images/Ren.avif') }}" />
+            <p class="description">Sweet and poetic are the characteristics that suit Ren the best. His love for literature make for the most intellectual of conversations.</p>
+        </div>
+        <div class="card">
+            <h2>Yuto</h2>
+            <img class="profile" alt="Profile Picture" src="{{ url_for('static', filename='images/Yuto.jpg') }}" />
+            <p class="description">Liking everything games and anime, Yuto is not only the youngest in the group but also the loudest. He is the life of the party!</p>
+        </div>
+        <div class="card">
+            <h2>Akihito</h2>
+            <img class="profile" alt="Profile Picture" src="{{ url_for('static', filename='images/akihito.avif') }}" />
+            <p class="description">Hard on the outside, soft on the inside, Akihito is difficult to trust. Though in reality, he craves someone whom he can be his authentic self around.</p>
+        </div>
+    </div>
 
     <script>
         var socket = io.connect('http://127.0.0.1:5000');
         var currentMessageContainer = null;
         var currentRole = null;
+
+        window.addEventListener("keypress", (event) => {
+            if(event.keyCode === 13){
+                event.preventDefault();
+                // Execute code
+                startConversation();
+            }
+        })
 
         socket.on('new_message', function(msg) {
             var chat = document.getElementById('chat');
